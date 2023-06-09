@@ -1,0 +1,11 @@
+node251
+Fri Mar 17 17:00:54 EDT 2023
+MCCL:
+[-1.578  0.381  3.015  0.033  0.099  0.196]
+Naive Estimation:
+[-1.581  0.27   2.979]
+Naive Estimation SE:
+[0.041 0.058 0.094]
+SIMEX point estimation:
+[ 3.008 -1.58   0.354]
+--- 1569.1640040874481 seconds ---
