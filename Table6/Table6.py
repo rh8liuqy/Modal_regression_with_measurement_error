@@ -18,7 +18,7 @@ def table6(Omega):
     B = 1000
 
     ## data import
-    df1 = pd.read_csv("BJadni.csv")
+    df1 = pd.read_csv("../BJadni.csv")
 
     x1 = df1["ento.change"].to_numpy()
     x2 = df1["hipp.change"].to_numpy()
