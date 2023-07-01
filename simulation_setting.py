@@ -1,6 +1,10 @@
 from Beta_reg import *
 from scipy.stats import norm
 
+# simulation program of model m1.
+# sample size: the sample size of the simulation study.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# output: the simulated data of model m1.
 def m1(sample_size,SigmaW=np.sqrt(1.2)):
     beta0 = 0.25
     beta1 = 0.25
@@ -27,6 +31,9 @@ def m1(sample_size,SigmaW=np.sqrt(1.2)):
     output = pd.DataFrame(output, columns=['Y','Wbar','SigmaWhat','Z1'])
     return output
 
+# simulation program of model m1.
+# sample size: the sample size of the simulation study.
+# output: the simulated data of model m2.
 def m2(sample_size):
     beta0 = 1
     beta1 = 1
@@ -54,6 +61,9 @@ def m2(sample_size):
     output = pd.DataFrame(output, columns=['Y','Wbar','SigmaWhat','Z1'])
     return output
 
+# simulation program of model m3.
+# sample size: the sample size of the simulation study.
+# output: the simulated data of model m3.
 def m3(sample_size):
     beta0 = 1
     beta1 = 1
@@ -80,6 +90,9 @@ def m3(sample_size):
     output = pd.DataFrame(output, columns=['Y','Wbar','SigmaWhat','Z1'])
     return output
 
+# simulation program of model m4.
+# sample size: the sample size of the simulation study.
+# output: the simulated data of model m4.
 def m4(sample_size):
     beta0 = 1
     beta1 = 1
@@ -117,6 +130,13 @@ def m4(sample_size):
     output.loc[index,'Y'] = 1-1e-6
     return output
 
+# the inference associated with the Table 1 in the main article (single iteration).
+# seed: the random seed.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
+# output: the inference associated with the Table 1 in the main article (single iteration).
 def Table1(seed,method,n,SigmaW,B):
     np.random.seed(seed)
     condition = True
@@ -139,6 +159,13 @@ def Table1(seed,method,n,SigmaW,B):
         condition = np.isnan(output).any() or (output > 10.0).any()
     return output
 
+# the repeated simulation study associated with the Table 1 in the main article.
+# simu_size: the number of repeated the simulation study.
+# filename: the file name of the saved output.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
 def simu_Table1(simu_size,filename,method,n,SigmaW,B):
     simu_args = [None]*simu_size
     for i in range(simu_size):
@@ -153,6 +180,14 @@ def simu_Table1(simu_size,filename,method,n,SigmaW,B):
     print("--- %s seconds ---" % (time.time() - start_time))
     return None
 
+# the inference associated with the Figure 1 in the main article (single iteration).
+# independent: are X1 and X2 independent, true/false.
+# method: M-estimation or not.
+# seed: the random seed.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
+# output: the inference associated with the Figure 1 in the main article (single iteration).
 def Figure1(indepedent,method,seed,n,SigmaW,B):
     np.random.seed(seed)
     condition = True
@@ -205,6 +240,14 @@ def Figure1(indepedent,method,seed,n,SigmaW,B):
         condition = np.isnan(output).any() or (output > 10.0).any()
     return output
 
+# the repeated simulation study associated with the Figure 1 in the main article.
+# simu_size: the number of repeated the simulation study.
+# filename: the file name of the saved output.
+# independent: are X1 and X2 independent, true/false.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
 def simu_Figure1(simu_size,filename,indepedent,method,n,SigmaW,B):
     simu_args = [None]*simu_size
     for i in range(simu_size):
@@ -218,6 +261,13 @@ def simu_Figure1(simu_size,filename,indepedent,method,n,SigmaW,B):
     print("--- %s seconds ---" % (time.time() - start_time))
     return None
 
+# the inference associated with the Table 2 in the main article (single iteration).
+# seed: the random seed.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
+# output: the inference associated with the Table 2 in the main article (single iteration).
 def Table2(method,seed,n,SigmaW,B):
     np.random.seed(seed)
     condition = True
@@ -241,6 +291,13 @@ def Table2(method,seed,n,SigmaW,B):
         condition = np.isnan(output).any() or (output > 10.0).any()
     return output
 
+# the repeated simulation study associated with the Table 2 in the main article.
+# simu_size: the number of repeated the simulation study.
+# filename: the file name of the saved output.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
 def simu_Table2(simu_size,filename,method,n,SigmaW,B):
     simu_args = [None]*simu_size
     for i in range(simu_size):
@@ -255,6 +312,13 @@ def simu_Table2(simu_size,filename,method,n,SigmaW,B):
     print("--- %s seconds ---" % (time.time() - start_time))
     return None
 
+# the inference associated with the Table 3 in the main article (single iteration).
+# method: naive estimation or the M-esimtation.
+# known_variance: assumption that the variance of the measurement error is known or not. true/false.
+# seed: the random seed.
+# n: the sample size.
+# B the value of B in Equation (7).
+# output: the inference associated with the Table 3 in the main article (single iteration).
 def Table3(method,known_variance,seed,n,B):    
     np.random.seed(seed)
     condition = True
@@ -301,6 +365,13 @@ def Table3(method,known_variance,seed,n,B):
         condition = np.isnan(output).any() or (output > 10.0).any()
     return output
 
+# the repeated simulation study associated with the Table 3 in the main article.
+# simu_size: the number of repeated the simulation study.
+# filename: the file name of the saved output.
+# known_variance: assumption that the variance of the measurement error is known or not. true/false.
+# method: naive estimation or the M-esimtation.
+# n: the sample size.
+# B the value of B in Equation (7).
 def simu_Table3(simu_size,filename,known_variance,method,n,B):
     simu_args = [None]*simu_size
     for i in range(simu_size):
@@ -314,6 +385,12 @@ def simu_Table3(simu_size,filename,known_variance,method,n,B):
     print("--- %s seconds ---" % (time.time() - start_time))
     return None
 
+# the inference associated with the Figure 2 in the main article (single iteration).
+# seed: the random seed.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
+# output: the inference associated with the Figure 2 in the main article (single iteration).
 def Figure2(seed,n,SigmaW,B):
     np.random.seed(seed)
     condition = True
@@ -342,6 +419,13 @@ def Figure2(seed,n,SigmaW,B):
             condition = np.isnan(output)
     return output
 
+# the repeated simulation study associated with the Figure 2 in the main article.
+# seed_start: the starting number of the random seed.
+# seed_end: the ending number of the random seed.
+# filename: the file name of the saved output.
+# n: the sample size.
+# SigmaW: the standard deviation associated with the measurement error. See Section 5.1. 
+# B the value of B in Equation (7).
 def simu_Figure2(seed_start,seed_end,filename,n,SigmaW,B):
     simu_size = seed_end - seed_start + 1
     simu_args = [None]*simu_size
@@ -356,6 +440,12 @@ def simu_Figure2(seed_start,seed_end,filename,n,SigmaW,B):
     print("--- %s seconds ---" % (time.time() - start_time))
     return None
 
+# the inference associated with the Table 4 in the main article (single iteration).
+# model: the choice of models, "m2" or "m3" or "m4".
+# seed: the random seed.
+# n: the sample size.
+# B the value of B in Equation (7).
+# output: the inference associated with the Table 4 in the main article (single iteration). 
 def Table4(model,seed,n,B):
     np.random.seed(seed)
     condition = True
@@ -391,6 +481,13 @@ def Table4(model,seed,n,B):
             condition = np.isnan(output)
     return output
 
+# the repeated simulation study associated with the Table 4 in the main article.
+# seed_start: the starting number of the random seed.
+# seed_end: the ending number of the random seed.
+# filename: the file name of the saved output.
+# model: the choice of models, "m2" or "m3" or "m4".
+# n: the sample size.
+# B the value of B in Equation (7).
 def simu_Table4(seed_start,seed_end,filename,model,n,B):
     simu_size = seed_end - seed_start + 1
     simu_args = [None]*simu_size

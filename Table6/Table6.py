@@ -11,6 +11,8 @@ torch.manual_seed(100)
 if torch.cuda.is_available():
     device = 'cuda:0'
 
+# the statistical inference program associated with Table 6.
+# Omega: the unknown parameters.
 def table6(Omega):
     ## Define the number of Monte Carlo replicates
     B = 1000

@@ -8,12 +8,21 @@ import numdifftools as nd
 import multiprocessing as mp
 import time
 
+# the log transformed probability density function(pdf) of beta distribution with mean = a/(a+b).
+# x: the observed values.
+# a: a shape parameter.
+# b: a shape parameter.
+#output: the log transformed pdf.
 def beta_lpdf(x,a,b):
     p1 = -loggamma(a)-loggamma(b)+loggamma(a+b)
     p2 = (a-1.0)*np.log(x)+(b-1.0)*np.log(1.0-x)
     output = p1+p2
     return output
 
+# log transformed probability density function(pdf) of beta distribution in the regression setting.
+# params[0]: the log transformed parameter m.
+# params[1:len(params)]: betas.
+# output: the log transformed pdf in the regression setting.
 def beta_reg_lpdf(params,y,X):
     logm = params[0]
     m = np.exp(logm)
@@ -24,6 +33,11 @@ def beta_reg_lpdf(params,y,X):
     output = beta_lpdf(y, 1.0+m*thetaX, 1.0+m*(1.0-thetaX))
     return output
 
+# the MLE of the naive beta regression model.
+# inits: the initial values unknown parameters.
+# y: the observed dependent variables.
+# X: the design matrix.
+# output: the MLE estimation of the unknown parameters.
 def beta_reg_MLE(inits,y,X):
     inits = np.array(inits)
     def neglogll(params):
@@ -39,6 +53,11 @@ def beta_reg_MLE(inits,y,X):
     output = point_est
     return output
 
+# the standard deviation of the naive MLE.
+# params: the MLE estimation of unknown parameters.
+# y: the observed dependent variables.
+# X: the design matrix.
+# output: the standard deviation associated with the naive MLE.
 def beta_reg_sd(params,y,X):
     p = params.shape[0]
     def loglikelihood(params):
@@ -52,6 +71,11 @@ def beta_reg_sd(params,y,X):
     output = np.sqrt(np.diag(output))
     return output
 
+# the random number generator of random vector T in Stefanski et al. (2005). See Equation (7) in the main article.
+# monte_carlo_size: the size of the random vector T. In Equation (7), this is denoted as B.
+# sample_size: the sample size, which is as the same as the size of dependent variable y.
+# repeated_measure: the number of the repeated measures.
+# output: the generated random vector T.
 def RV_T(monte_carlo_size,sample_size,repeated_measure=3):
     output = np.zeros(monte_carlo_size*sample_size)
     output = output.reshape(monte_carlo_size,sample_size)
@@ -69,6 +93,15 @@ def RV_T(monte_carlo_size,sample_size,repeated_measure=3):
     output = np.concatenate(output)
     return output
 
+# the corrected log-pdf of the beta regression model.
+# params: all the unknown parameters of the beta regression model.
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the corrected log-pdf of the beta regression model.
 def correct_beta_reg_lpdf(params,y,W,Z,nj,S,B,T):
     logm = params[0]
     m = np.exp(logm)
@@ -90,6 +123,15 @@ def correct_beta_reg_lpdf(params,y,W,Z,nj,S,B,T):
     output = np.mean(output,axis=1)
     return output
 
+# the corrected score of each observation.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the corrected score of each observation.
 def correct_score_n(params,y,W,Z,nj,S,B,T):
     logm = params[0]
     m = np.exp(logm)
@@ -127,11 +169,30 @@ def correct_score_n(params,y,W,Z,nj,S,B,T):
         output[i+1,:] = psib
     return output
 
+# the summation of corrected score of all observations.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the summation of corrected score of all observations.
 def correct_score(params,y,W,Z,nj,S,B,T):
     output = correct_score_n(params,y,W,Z,nj,S,B,T)
     output = np.sum(output,axis=1)
     return output
 
+# the M estimation of all unknown parameters (point esitmation only).
+# inits: the initial values unknown parameters.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the M estimation (point esitmation only) of all unknown parameters.
 def correct_beta_reg_point_est(inits,y,W,Z,nj,S,B,T):
     inits = np.array(inits)
     def neglogll(params):
@@ -147,6 +208,16 @@ def correct_beta_reg_point_est(inits,y,W,Z,nj,S,B,T):
     output = point_est
     return output
 
+# the M estimation of all unknown parameters (point esitmation and standard deviation associated with it).
+# inits: the initial values unknown parameters.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the M estimation (point esitmation and standard deviation associated with it) of all unknown parameters.
 def correct_beta_reg_inference(inits,y,W,Z,nj,S,B,T):
     inits = np.array(inits)
     def neglogll(params):
@@ -167,6 +238,16 @@ def correct_beta_reg_inference(inits,y,W,Z,nj,S,B,T):
     output = np.concatenate((point_est,params_cov))
     return output
 
+# the hotelling T statistics. See Equation (13).
+# params: the point estimation of all unknown parameters.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# output: the hotelling T statistics.
 def hotelling_T(params,y,W,Z,nj,S,B,T):
     logm = params[0]
     m = np.exp(logm)
@@ -208,6 +289,17 @@ def hotelling_T(params,y,W,Z,nj,S,B,T):
     output = {'T^2_statistic':Tstat,'p_value':pvalue}
     return output
 
+# the bootstrap procedure of the hotelling T statistics.
+# params: the point estimation of all unknown parameters.
+# y: the observed dependent variable. 
+# W: the error contaminated covariates.
+# Z: the error free covariates.
+# nj: the number of repeated measures. See Equation (7) in the main article.
+# S: the sample standard deviation of $\widetilde{W}_j=\left\{W_{j, k}\right\}_{k=1}^{n_j}$. See Equation (6) in the main article.
+# B: the value of B in Equation (7).
+# T: the generated random vector T.
+# bootstrap_B: the number of bootstrap.
+# output: the p-value associated with the bootstrap procedure of hotelling T statistics.
 def hotelling_bootstrap(params,y,W,Z,nj,S,B,T,bootstrap_B):
     if np.isnan(params).any():
         output = {'p-value':np.nan}
