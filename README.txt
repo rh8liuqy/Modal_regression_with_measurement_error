@@ -7,7 +7,7 @@ in Covariates”, by Qingyang Liu and Xianzheng Huang.
 
 For questions, comments or remarks about the code please contact Qingyang Liu (qingyang@email.sc.edu).
 
-Functions for fitting parametric modal regression with wrror in covariates are provided in the file ./Beta_reg.py.
+Functions for fitting parametric modal regression with error in covariates are provided in the file ./Beta_reg.py.
 
 Models m1 - m4 and all data generation codes are provided in ./simulation_setting.py.
 
@@ -19,7 +19,7 @@ To reproduce the results presented in the manuscript (i.e Table 1 - Table 6 and 
 
 The python version information can be found in ./environment.yml and ./Table6/Table6.yml.
 .
-├── Beta_reg.py #Functions for fitting parametric modal regression with wrror in covariates
+├── Beta_reg.py #Functions for fitting parametric modal regression with error in covariates
 ├── BJadni.csv #Alzheimer’s disease data in Section 6.2, downloaded from Alzheimer’s Disease Neuroimaging Initiative (ADNI) database (http://adni.loni.usc.edu/). 
 ├── environment.yml #Version information
 ├── Figure1 #Intermediate results
